@@ -58,6 +58,26 @@ class ArticlesController extends Controller
     public function edit($id)
     {
 
+        $rules = [
+            'title' => 'required|min:3',
+            'body' => 'required',
+        ];
+
+        $err_msgs = [
+            'title.required' => 'Article must have a title', 
+            'title.min' => 'Article Title must be atleast 3 characters.', 
+            'body.required' => 'Article body is required.', 
+        ];
+
+        $validator = Validator::make(Request::all(), $rules, $err_msgs);
+
+        if ($validator->fails()) {
+
+            return redirect()->back()
+                ->withInput(Request::all())
+                ->withErrors($validator);
+        }
+
         $article = Article::find($id);
         $article->fill(Request::all());
         $article->save();
